@@ -1,8 +1,13 @@
 {
   "required": true,
+  "minVersion": "0.8",
   "package": "ru.govnomod.mixin",
   "compatibilityLevel": "JAVA_21",
   "client": [
-    "MinecraftClientMixin"
-  ]
+    "MinecraftClientMixin",
+    "MinecraftInvoker"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
 }
