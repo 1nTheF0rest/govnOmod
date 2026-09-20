@@ -1,88 +1,85 @@
 package ru.govnomod;
 
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.AbstractSliderButton;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 
+import java.util.Locale;
+
 public final class GovnOmodScreen extends Screen {
     private final Screen parent;
-    private EditBox leftCps;
-    private EditBox rightCps;
+    private CpsSlider leftSlider;
+    private CpsSlider rightSlider;
     private Button enabledButton;
-    private Button modeButton;
     private Button leftButton;
     private Button rightButton;
+    private Button modeButton;
 
     public GovnOmodScreen(Screen parent) {
-        super(Component.literal("Говномод"));
+        super(Component.literal("govnOmod"));
         this.parent = parent;
     }
 
     @Override
     protected void init() {
         int cx = width / 2;
-        int y = height / 2 - 105;
+        int top = Math.max(35, height / 2 - 125);
 
         enabledButton = addRenderableWidget(Button.builder(Component.literal(enabledText()), b -> {
             GovnOmodClient.CONFIG.enabled = !GovnOmodClient.CONFIG.enabled;
-            GovnOmodClient.CONFIG.save();
             b.setMessage(Component.literal(enabledText()));
-        }).bounds(cx - 160, y, 320, 20).build());
-
-        modeButton = addRenderableWidget(Button.builder(Component.literal(modeText()), b -> {
-            GovnOmodClient.CONFIG.holdMode = !GovnOmodClient.CONFIG.holdMode;
             GovnOmodClient.CONFIG.save();
-            b.setMessage(Component.literal(modeText()));
-        }).bounds(cx - 160, y + 28, 320, 20).build());
+        }).bounds(cx - 170, top, 340, 22).build());
 
         leftButton = addRenderableWidget(Button.builder(Component.literal(leftText()), b -> {
             GovnOmodClient.CONFIG.leftEnabled = !GovnOmodClient.CONFIG.leftEnabled;
-            GovnOmodClient.CONFIG.save();
             b.setMessage(Component.literal(leftText()));
-        }).bounds(cx - 160, y + 56, 150, 20).build());
+            GovnOmodClient.CONFIG.save();
+        }).bounds(cx - 170, top + 31, 165, 22).build());
 
         rightButton = addRenderableWidget(Button.builder(Component.literal(rightText()), b -> {
             GovnOmodClient.CONFIG.rightEnabled = !GovnOmodClient.CONFIG.rightEnabled;
-            GovnOmodClient.CONFIG.save();
             b.setMessage(Component.literal(rightText()));
-        }).bounds(cx + 10, y + 56, 150, 20).build());
+            GovnOmodClient.CONFIG.save();
+        }).bounds(cx + 5, top + 31, 165, 22).build());
 
-        leftCps = new EditBox(font, cx - 160, y + 100, 150, 20, Component.literal("ЛКМ CPS"));
-        leftCps.setValue(format(GovnOmodClient.CONFIG.leftCps));
-        leftCps.setHint(Component.literal("ЛКМ CPS"));
-        leftCps.setResponder(v -> saveCps());
-        addRenderableWidget(leftCps);
+        leftSlider = addRenderableWidget(new CpsSlider(
+                cx - 170, top + 68, 340, 22, GovnOmodClient.CONFIG.leftCps,
+                "ЛКМ CPS", value -> {
+                    GovnOmodClient.CONFIG.leftCps = value;
+                    GovnOmodClient.CONFIG.save();
+                }));
 
-        rightCps = new EditBox(font, cx + 10, y + 100, 150, 20, Component.literal("ПКМ CPS"));
-        rightCps.setValue(format(GovnOmodClient.CONFIG.rightCps));
-        rightCps.setHint(Component.literal("ПКМ CPS"));
-        rightCps.setResponder(v -> saveCps());
-        addRenderableWidget(rightCps);
-    }
+        rightSlider = addRenderableWidget(new CpsSlider(
+                cx - 170, top + 99, 340, 22, GovnOmodClient.CONFIG.rightCps,
+                "ПКМ CPS", value -> {
+                    GovnOmodClient.CONFIG.rightCps = value;
+                    GovnOmodClient.CONFIG.save();
+                }));
 
-    private void saveCps() {
-        GovnOmodClient.CONFIG.leftCps = parse(leftCps == null ? "" : leftCps.getValue(), GovnOmodClient.CONFIG.leftCps);
-        GovnOmodClient.CONFIG.rightCps = parse(rightCps == null ? "" : rightCps.getValue(), GovnOmodClient.CONFIG.rightCps);
-        GovnOmodClient.CONFIG.save();
-    }
+        modeButton = addRenderableWidget(Button.builder(Component.literal(modeText()), b -> {
+            GovnOmodClient.CONFIG.holdMode = !GovnOmodClient.CONFIG.holdMode;
+            b.setMessage(Component.literal(modeText()));
+            GovnOmodClient.CONFIG.save();
+        }).bounds(cx - 170, top + 130, 340, 22).build());
 
-    private static double parse(String value, double fallback) {
-        try { return Config.sanitize(Double.parseDouble(value.replace(',', '.')), fallback); }
-        catch (NumberFormatException ignored) { return fallback; }
-    }
+        addRenderableWidget(Button.builder(Component.literal("Настройки блоков/предметов"), b ->
+                minecraft.setScreen(new ItemSettingsScreen(this))).bounds(cx - 170, top + 164, 340, 22).build());
 
-    private static String format(double value) {
-        return String.format(java.util.Locale.ROOT, "%.1f", value);
+        addRenderableWidget(Button.builder(Component.literal("Сохранить"), b -> {
+            GovnOmodClient.CONFIG.save();
+            b.setMessage(Component.literal("Сохранено"));
+        }).bounds(cx - 82, top + 195, 164, 22).build());
+
+        addRenderableWidget(Button.builder(Component.literal("Закрыть"), b -> onClose())
+                .bounds(cx - 82, top + 224, 164, 22).build());
     }
 
     private static String enabledText() {
-        return "Говномод: " + (GovnOmodClient.CONFIG.enabled ? "ВКЛ" : "ВЫКЛ");
-    }
-
-    private static String modeText() {
-        return "Режим: " + (GovnOmodClient.CONFIG.holdMode ? "ПРИ ЗАЖАТИИ" : "ПОСТОЯННЫЙ");
+        return "Мод: " + (GovnOmodClient.CONFIG.enabled ? "ВКЛ" : "ВЫКЛ");
     }
 
     private static String leftText() {
@@ -93,20 +90,52 @@ public final class GovnOmodScreen extends Screen {
         return "ПКМ: " + (GovnOmodClient.CONFIG.rightEnabled ? "ВКЛ" : "ВЫКЛ");
     }
 
+    private static String modeText() {
+        return "Режим: " + (GovnOmodClient.CONFIG.holdMode ? "ПРИ ЗАЖАТИИ" : "ПОСТОЯННЫЙ");
+    }
+
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
-        graphics.fill(0, 0, width, height, 0xFF101010);
-        graphics.drawCenteredString(font, title, width / 2, height / 2 - 140, 0xFFFFFF);
-        graphics.drawCenteredString(font, Component.literal("CPS задаётся отдельно для ЛКМ и ПКМ"),
-                width / 2, height / 2 - 125, 0xAAAAAA);
-        graphics.drawCenteredString(font, Component.literal("Создатель: Фуня"),
-                width / 2, height / 2 + 50, 0xFFFFFF);
+        graphics.fill(0, 0, width, height, 0xFF101214);
+        graphics.fill(width / 2 - 190, height / 2 - 145, width / 2 + 190, height / 2 + 140, 0xFF202328);
+        graphics.drawCenteredString(font, title, width / 2, height / 2 - 139, 0xFFFFFF);
+        graphics.drawCenteredString(font, Component.literal("govnOmod • Fabric 1.21.11"),
+                width / 2, height / 2 - 122, 0xAAAAAA);
         super.render(graphics, mouseX, mouseY, delta);
     }
 
     @Override
     public void onClose() {
-        saveCps();
+        GovnOmodClient.CONFIG.save();
         minecraft.setScreen(parent);
+    }
+
+    private static final class CpsSlider extends AbstractSliderButton {
+        private final String label;
+        private final java.util.function.IntConsumer consumer;
+
+        private CpsSlider(int x, int y, int width, int height, int cps, String label,
+                          java.util.function.IntConsumer consumer) {
+            super(x, y, width, height, Component.literal(label), (Config.clampCps(cps) - 1) / 199.0);
+            this.label = label;
+            this.consumer = consumer;
+            updateMessage();
+        }
+
+        @Override
+        protected void updateMessage() {
+            int cps = valueToCps();
+            setMessage(Component.literal(label + ": " + cps));
+        }
+
+        @Override
+        protected void applyValue() {
+            int cps = valueToCps();
+            consumer.accept(cps);
+        }
+
+        private int valueToCps() {
+            return Config.clampCps((int) Math.round(1.0 + value * 199.0));
+        }
     }
 }
