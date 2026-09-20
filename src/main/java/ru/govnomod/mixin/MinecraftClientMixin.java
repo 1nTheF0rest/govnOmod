@@ -18,6 +18,10 @@ public abstract class MinecraftClientMixin {
 
     @Inject(method = "startUseItem", at = @At("HEAD"))
     private void govnomod$fastPlace(CallbackInfo ci) {
+        if (!GovnOmodClient.CONFIG.enabled) {
+            return;
+        }
+
         Minecraft client = (Minecraft) (Object) this;
         LocalPlayer player = client.player;
         if (player == null) {
@@ -29,10 +33,7 @@ public abstract class MinecraftClientMixin {
             return;
         }
 
-        String blockId = BuiltInRegistries.BLOCK
-                .getKey(blockItem.getBlock())
-                .toString();
-
+        String blockId = BuiltInRegistries.BLOCK.getKey(blockItem.getBlock()).toString();
         double cps = GovnOmodClient.CONFIG.cpsFor(blockId);
         int maxDelay = Math.max(0, (int) Math.floor(20.0 / cps));
 
