@@ -11,6 +11,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 public final class Config {
+    public boolean enabled = true;
     public double defaultCps = 20.0;
     public Map<String, Double> blockCps = new LinkedHashMap<>();
 
