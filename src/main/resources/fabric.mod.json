@@ -2,16 +2,14 @@
   "schemaVersion": 1,
   "id": "govnomod",
   "version": "${version}",
-  "name": "govnOmod",
-  "description": "Fast Place with configurable CPS and per-block overrides.",
-  "authors": ["1nTheF0rest"],
+  "name": "Говномод",
+  "description": "Самый бессмысленно необходимый мод, который когда-либо попадал в твой .minecraft. Добавляет функции, которые никто не просил, настройки, которые никто не понимает, и клавиши, которые обязательно будут нажаты в самый неподходящий момент. Никакой практической пользы. Именно поэтому мод существует. Создатель: Фуня.",
+  "authors": ["Фуня"],
   "environment": "client",
   "entrypoints": {
     "client": ["ru.govnomod.GovnOmodClient"]
   },
-  "mixins": [
-    "govnomod.mixins.json"
-  ],
+  "mixins": ["govnomod.mixins.json"],
   "depends": {
     "fabricloader": ">=0.18.1",
     "minecraft": "1.21.11",
