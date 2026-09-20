@@ -30,7 +30,7 @@ public final class GovnOmodScreen extends Screen {
 
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
-        renderBackground(graphics, mouseX, mouseY, delta);
+        graphics.fill(0, 0, width, height, 0xFF101010);
         graphics.drawCenteredString(font, title, width / 2, height / 2 - 45, 0xFFFFFF);
         graphics.drawCenteredString(font, Component.literal("Создатель: Фуня"),
                 width / 2, height / 2 + 25, 0xFFFFFF);
