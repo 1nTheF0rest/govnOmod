@@ -23,7 +23,7 @@ public final class GovnOmodClient implements ClientModInitializer {
         TOGGLE_KEY = KeyBindingHelper.registerKeyBinding(new KeyMapping(
                 "key.govnomod.toggle",
                 InputConstants.Type.KEYSYM,
-                GLFW.GLFW_KEY_G,
+                GLFW.GLFW_KEY_GRAVE_ACCENT,
                 KEY_CATEGORY
         ));
 
