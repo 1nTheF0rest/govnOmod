@@ -2,6 +2,7 @@ package ru.govnomod.mixin;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
@@ -28,7 +29,7 @@ public abstract class MinecraftClientMixin {
             return;
         }
 
-        String blockId = net.minecraft.core.registries.BuiltInRegistries.BLOCK
+        String blockId = BuiltInRegistries.BLOCK
                 .getKey(blockItem.getBlock())
                 .toString();
 
