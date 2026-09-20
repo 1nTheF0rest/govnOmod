@@ -27,7 +27,7 @@ public final class ItemSettingsScreen extends Screen {
         itemIdBox = new EditBox(font, cx - 190, 32, 280, 20, Component.literal("ID предмета"));
         itemIdBox.setMaxLength(128);
         itemIdBox.setHint(Component.literal("minecraft:stone"));
-        itemIdBox.setFilter(s -> s.matches("[a-z0-9_:\-.]*"));
+        itemIdBox.setFilter(s -> s.matches("[a-z0-9_:.\\-]*"));
         addRenderableWidget(itemIdBox);
 
         addRenderableWidget(Button.builder(Component.literal("Добавить"), b -> addItem())
