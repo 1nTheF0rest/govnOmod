@@ -5,6 +5,7 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.client.KeyMapping;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import org.lwjgl.glfw.GLFW;
 
@@ -34,12 +35,16 @@ public final class GovnOmodClient implements ClientModInitializer {
                 CONFIG.save();
                 if (client.player != null) {
                     client.player.displayClientMessage(
-                            net.minecraft.network.chat.Component.literal(
-                                    "Говномод: " + (CONFIG.enabled ? "ВКЛЮЧЕН" : "ВЫКЛЮЧЕН")), true);
+                            Component.literal("Говномод: " + (CONFIG.enabled ? "ВКЛ" : "ВЫКЛ")), true);
                 }
             }
+
             while (MENU_KEY.consumeClick()) {
-                client.setScreen(new GovnOmodScreen(client.screen));
+                if (client.screen == null) {
+                    client.setScreen(new GovnOmodScreen(null));
+                } else if (client.screen instanceof GovnOmodScreen) {
+                    client.setScreen(null);
+                }
             }
         });
 
