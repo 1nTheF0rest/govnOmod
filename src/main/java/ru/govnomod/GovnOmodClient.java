@@ -21,18 +21,12 @@ public final class GovnOmodClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         TOGGLE_KEY = KeyBindingHelper.registerKeyBinding(new KeyMapping(
-                "key.govnomod.toggle",
-                InputConstants.Type.KEYSYM,
-                GLFW.GLFW_KEY_GRAVE_ACCENT,
-                KEY_CATEGORY
-        ));
+                "key.govnomod.toggle", InputConstants.Type.KEYSYM,
+                GLFW.GLFW_KEY_GRAVE_ACCENT, KEY_CATEGORY));
 
         MENU_KEY = KeyBindingHelper.registerKeyBinding(new KeyMapping(
-                "key.govnomod.menu",
-                InputConstants.Type.KEYSYM,
-                GLFW.GLFW_KEY_RIGHT_SHIFT,
-                KEY_CATEGORY
-        ));
+                "key.govnomod.menu", InputConstants.Type.KEYSYM,
+                GLFW.GLFW_KEY_RIGHT_SHIFT, KEY_CATEGORY));
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             while (TOGGLE_KEY.consumeClick()) {
@@ -41,13 +35,9 @@ public final class GovnOmodClient implements ClientModInitializer {
                 if (client.player != null) {
                     client.player.displayClientMessage(
                             net.minecraft.network.chat.Component.literal(
-                                    "Говномод: " + (CONFIG.enabled ? "ВКЛЮЧЕН" : "ВЫКЛЮЧЕН")
-                            ),
-                            true
-                    );
+                                    "Говномод: " + (CONFIG.enabled ? "ВКЛЮЧЕН" : "ВЫКЛЮЧЕН")), true);
                 }
             }
-
             while (MENU_KEY.consumeClick()) {
                 client.setScreen(new GovnOmodScreen(client.screen));
             }
