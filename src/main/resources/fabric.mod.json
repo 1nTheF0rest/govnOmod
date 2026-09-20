@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "id": "govnomod",
+  "version": "${version}",
+  "name": "govnOmod",
+  "description": "Fast Place with configurable CPS and per-block overrides.",
+  "authors": ["1nTheF0rest"],
+  "environment": "client",
+  "entrypoints": {
+    "client": ["ru.govnomod.GovnOmodClient"]
+  },
+  "mixins": [
+    "govnomod.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.18.1",
+    "minecraft": "1.21.11",
+    "java": ">=21",
+    "fabric-api": "*"
+  }
+}
