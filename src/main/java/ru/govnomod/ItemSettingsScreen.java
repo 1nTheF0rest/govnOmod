@@ -5,7 +5,7 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.core.registries.BuiltInRegistries;
 
 import java.util.ArrayList;
@@ -23,19 +23,15 @@ public final class ItemSettingsScreen extends Screen {
     @Override
     protected void init() {
         int cx = width / 2;
-
         itemIdBox = new EditBox(font, cx - 190, 32, 280, 20, Component.literal("ID предмета"));
         itemIdBox.setMaxLength(128);
         itemIdBox.setHint(Component.literal("minecraft:stone"));
         itemIdBox.setFilter(s -> s.matches("[a-z0-9_:.\\-]*"));
         addRenderableWidget(itemIdBox);
-
         addRenderableWidget(Button.builder(Component.literal("Добавить"), b -> addItem())
                 .bounds(cx + 95, 32, 95, 20).build());
-
         addRenderableWidget(Button.builder(Component.literal("Назад"), b -> onClose())
                 .bounds(cx - 55, height - 30, 110, 20).build());
-
         buildRows();
     }
 
@@ -80,22 +76,21 @@ public final class ItemSettingsScreen extends Screen {
 
         addRenderableWidget(Button.builder(Component.literal("Удалить"), b -> {
             removeItem(itemId);
-            clearAndInit();
+            minecraft.setScreen(new ItemSettingsScreen(parent));
         }).bounds(cx + 80, y, 90, 20).build());
     }
 
     private void addItem() {
         String id = itemIdBox.getValue().trim().toLowerCase(Locale.ROOT);
-        ResourceLocation location = ResourceLocation.tryParse(id);
+        Identifier location = Identifier.tryParse(id);
         if (location == null || !BuiltInRegistries.ITEM.containsKey(location)) {
             itemIdBox.setValue("");
             return;
         }
-
         GovnOmodClient.CONFIG.itemSettings.putIfAbsent(id, new Config.ItemSetting(10, 20));
         GovnOmodClient.CONFIG.save();
         itemIdBox.setValue("");
-        clearAndInit();
+        minecraft.setScreen(new ItemSettingsScreen(parent));
     }
 
     private void removeItem(String id) {
@@ -117,8 +112,7 @@ public final class ItemSettingsScreen extends Screen {
         try {
             setting.leftCps = Config.clampCps(Integer.parseInt(value));
             GovnOmodClient.CONFIG.save();
-        } catch (NumberFormatException ignored) {
-        }
+        } catch (NumberFormatException ignored) {}
     }
 
     private void setRight(String id, String value) {
@@ -127,8 +121,7 @@ public final class ItemSettingsScreen extends Screen {
         try {
             setting.rightCps = Config.clampCps(Integer.parseInt(value));
             GovnOmodClient.CONFIG.save();
-        } catch (NumberFormatException ignored) {
-        }
+        } catch (NumberFormatException ignored) {}
     }
 
     private static String shortId(String id) {
@@ -143,7 +136,6 @@ public final class ItemSettingsScreen extends Screen {
         graphics.drawString(font, Component.literal("ID предмета/блока:"), width / 2 - 190, 22, 0xAAAAAA);
         graphics.drawString(font, Component.literal("ЛКМ"), width / 2 - 38, 66, 0xAAAAAA);
         graphics.drawString(font, Component.literal("ПКМ"), width / 2 + 22, 66, 0xAAAAAA);
-
         if (GovnOmodClient.CONFIG.itemSettings.isEmpty()) {
             graphics.drawCenteredString(font, Component.literal("Добавь ID, например minecraft:stone"),
                     width / 2, 100, 0xAAAAAA);
@@ -151,7 +143,6 @@ public final class ItemSettingsScreen extends Screen {
             graphics.drawCenteredString(font, Component.literal("Показаны первые 7 записей"),
                     width / 2, height - 48, 0xAAAAAA);
         }
-
         super.render(graphics, mouseX, mouseY, delta);
     }
 
