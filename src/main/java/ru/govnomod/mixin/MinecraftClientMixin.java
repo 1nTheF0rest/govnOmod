@@ -5,8 +5,6 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
-import org.lwjgl.glfw.GLFW;
-import ru.govnomod.mixin.MinecraftInvoker;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -45,10 +43,8 @@ public abstract class MinecraftClientMixin {
         if (client.player == null || client.level == null || client.screen != null) return;
 
         long now = System.nanoTime();
-        long window = client.getWindow().getHandle();
-
-        boolean leftDown = GLFW.glfwGetMouseButton(window, GLFW.GLFW_MOUSE_BUTTON_LEFT) == GLFW.GLFW_PRESS;
-        boolean rightDown = GLFW.glfwGetMouseButton(window, GLFW.GLFW_MOUSE_BUTTON_RIGHT) == GLFW.GLFW_PRESS;
+        boolean leftDown = client.mouseHandler.isLeftPressed();
+        boolean rightDown = client.mouseHandler.isRightPressed();
 
         if (!GovnOmodClient.CONFIG.holdMode) {
             leftDown = true;
