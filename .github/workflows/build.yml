@@ -31,3 +31,5 @@ jobs:
         with:
           name: govnOmod-1.21.11
           path: build/libs/govnOmod-*.jar
+
+# build trigger
