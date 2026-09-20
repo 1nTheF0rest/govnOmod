@@ -19,14 +19,32 @@ public final class Config {
     private static final Path PATH = FabricLoader.getInstance().getConfigDir().resolve("govnomod.json");
 
     public double cpsFor(String blockId) {
-        return Math.max(0.1, blockCps.getOrDefault(blockId, defaultCps));
+        double cps = defaultCps;
+        if (blockCps != null) {
+            Double configured = blockCps.get(blockId);
+            if (configured != null) {
+                cps = configured;
+            }
+        }
+        if (!Double.isFinite(cps) || cps <= 0.0) {
+            cps = 20.0;
+        }
+        return Math.max(0.1, cps);
     }
 
     public static Config load() {
         try {
             if (Files.exists(PATH)) {
                 Config config = GSON.fromJson(Files.readString(PATH), Config.class);
-                return config == null ? new Config() : config;
+                if (config != null) {
+                    if (config.blockCps == null) {
+                        config.blockCps = new LinkedHashMap<>();
+                    }
+                    if (!Double.isFinite(config.defaultCps) || config.defaultCps <= 0.0) {
+                        config.defaultCps = 20.0;
+                    }
+                    return config;
+                }
             }
         } catch (Exception ignored) {
         }
