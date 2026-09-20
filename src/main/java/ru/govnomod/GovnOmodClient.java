@@ -5,13 +5,15 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.client.KeyMapping;
+import net.minecraft.resources.Identifier;
 import org.lwjgl.glfw.GLFW;
 
 public final class GovnOmodClient implements ClientModInitializer {
     public static final String MOD_ID = "govnomod";
     public static final Config CONFIG = Config.load();
 
-    private static final String KEY_CATEGORY = "key.categories.govnomod";
+    private static final KeyMapping.Category KEY_CATEGORY =
+            KeyMapping.Category.create(Identifier.of(MOD_ID, "keys"));
 
     public static KeyMapping TOGGLE_KEY;
     public static KeyMapping MENU_KEY;
