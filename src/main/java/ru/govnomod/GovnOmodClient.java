@@ -13,7 +13,7 @@ public final class GovnOmodClient implements ClientModInitializer {
     public static final Config CONFIG = Config.load();
 
     private static final KeyMapping.Category KEY_CATEGORY =
-            KeyMapping.Category.create(Identifier.of(MOD_ID, "keys"));
+            KeyMapping.Category.create(Identifier.fromNamespaceAndPath(MOD_ID, "keys"));
 
     public static KeyMapping TOGGLE_KEY;
     public static KeyMapping MENU_KEY;
