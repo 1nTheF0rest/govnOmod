@@ -4,8 +4,7 @@
   "package": "ru.govnomod.mixin",
   "compatibilityLevel": "JAVA_21",
   "client": [
-    "MinecraftClientMixin",
-    "MinecraftInvoker"
+    "MinecraftClientMixin"
   ],
   "injectors": {
     "defaultRequire": 1
