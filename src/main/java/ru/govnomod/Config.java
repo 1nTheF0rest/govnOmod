@@ -10,6 +10,7 @@ import java.nio.file.Path;
 
 public final class Config {
     public boolean enabled = false;
+    /** Client-side right-click cooldown in ticks. 0 means no vanilla delay. */
     public int placementDelay = 0;
 
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
