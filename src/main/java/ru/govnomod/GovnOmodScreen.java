@@ -22,17 +22,13 @@ public final class GovnOmodScreen extends Screen {
         addRenderableWidget(Button.builder(
                 Component.literal(enabledText()),
                 button -> {
-                    GovnOmodClient.CONFIG.enabled =
-                            !GovnOmodClient.CONFIG.enabled;
+                    GovnOmodClient.CONFIG.enabled = !GovnOmodClient.CONFIG.enabled;
                     GovnOmodClient.CONFIG.save();
                     button.setMessage(Component.literal(enabledText()));
                 }).bounds(cx - 160, top, 320, 22).build());
 
         addRenderableWidget(new DelaySlider(
-                cx - 160,
-                top + 38,
-                320,
-                22,
+                cx - 160, top + 38, 320, 22,
                 GovnOmodClient.CONFIG.placementDelay));
 
         addRenderableWidget(Button.builder(Component.literal("Сохранить"),
@@ -46,8 +42,7 @@ public final class GovnOmodScreen extends Screen {
     }
 
     private static String enabledText() {
-        return "Говномод: "
-                + (GovnOmodClient.CONFIG.enabled ? "ВКЛ" : "ВЫКЛ");
+        return "Говномод: " + (GovnOmodClient.CONFIG.enabled ? "ВКЛ" : "ВЫКЛ");
     }
 
     @Override
@@ -56,17 +51,12 @@ public final class GovnOmodScreen extends Screen {
         graphics.fill(width / 2 - 180, height / 2 - 95,
                 width / 2 + 180, height / 2 + 145, 0xFF202328);
 
-        graphics.drawCenteredString(
-                font, title, width / 2, height / 2 - 87, 0xFFFFFF);
-
-        graphics.drawCenteredString(
-                font,
+        graphics.drawCenteredString(font, title, width / 2, height / 2 - 87, 0xFFFFFF);
+        graphics.drawCenteredString(font,
                 Component.literal("O — настройки | V — включение"),
                 width / 2, height / 2 - 67, 0xAAAAAA);
-
-        graphics.drawCenteredString(
-                font,
-                Component.literal("ПКМ: ускоренная установка блоков"),
+        graphics.drawCenteredString(font,
+                Component.literal("0 тиков = максимальное ускорение ПКМ"),
                 width / 2, height / 2 + 42, 0xCCCCCC);
 
         super.render(graphics, mouseX, mouseY, delta);
@@ -80,8 +70,7 @@ public final class GovnOmodScreen extends Screen {
 
     private static final class DelaySlider extends AbstractSliderButton {
         private DelaySlider(int x, int y, int width, int height, int delay) {
-            super(x, y, width, height,
-                    Component.empty(),
+            super(x, y, width, height, Component.empty(),
                     Config.clampDelay(delay) / 20.0);
             updateMessage();
         }
@@ -92,8 +81,7 @@ public final class GovnOmodScreen extends Screen {
 
         @Override
         protected void updateMessage() {
-            setMessage(Component.literal(
-                    "Задержка установки: " + delay() + " тиков"));
+            setMessage(Component.literal("Задержка ПКМ: " + delay() + " тиков"));
         }
 
         @Override
