@@ -14,7 +14,8 @@ public final class GovnOmodClient implements ClientModInitializer {
     public static final Config CONFIG = Config.load();
 
     private static final KeyMapping.Category KEY_CATEGORY =
-            KeyMapping.Category.register(Identifier.fromNamespaceAndPath(MOD_ID, "keys"));
+            KeyMapping.Category.register(
+                    Identifier.fromNamespaceAndPath(MOD_ID, "keys"));
 
     public static KeyMapping TOGGLE_KEY;
     public static KeyMapping MENU_KEY;
@@ -22,20 +23,27 @@ public final class GovnOmodClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         TOGGLE_KEY = KeyBindingHelper.registerKeyBinding(new KeyMapping(
-                "key.govnomod.toggle", InputConstants.Type.KEYSYM,
-                GLFW.GLFW_KEY_GRAVE_ACCENT, KEY_CATEGORY));
+                "key.govnomod.toggle",
+                InputConstants.Type.KEYSYM,
+                GLFW.GLFW_KEY_V,
+                KEY_CATEGORY));
 
         MENU_KEY = KeyBindingHelper.registerKeyBinding(new KeyMapping(
-                "key.govnomod.menu", InputConstants.Type.KEYSYM,
-                GLFW.GLFW_KEY_RIGHT_SHIFT, KEY_CATEGORY));
+                "key.govnomod.menu",
+                InputConstants.Type.KEYSYM,
+                GLFW.GLFW_KEY_O,
+                KEY_CATEGORY));
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             while (TOGGLE_KEY.consumeClick()) {
                 CONFIG.enabled = !CONFIG.enabled;
                 CONFIG.save();
+
                 if (client.player != null) {
                     client.player.displayClientMessage(
-                            Component.literal("Говномод: " + (CONFIG.enabled ? "ВКЛ" : "ВЫКЛ")), true);
+                            Component.literal("Говномод: "
+                                    + (CONFIG.enabled ? "ВКЛ" : "ВЫКЛ")),
+                            true);
                 }
             }
 
