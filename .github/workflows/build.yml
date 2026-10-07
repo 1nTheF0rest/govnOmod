@@ -5,9 +5,13 @@ on:
     branches: [ main ]
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -17,17 +21,36 @@ jobs:
         with:
           distribution: temurin
           java-version: '21'
+          cache: gradle
 
-      - name: Set up Gradle
+      - name: Set up Gradle 9.2.1
         uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '9.2.1'
 
-      - name: Build
-        run: gradle build --refresh-dependencies
+      - name: Verify toolchain
+        run: |
+          java -version
+          gradle --version
+
+      - name: Build mod
+        run: gradle clean build --refresh-dependencies --no-daemon --stacktrace
+
+      - name: Verify JAR
+        shell: bash
+        run: |
+          shopt -s nullglob
+          jars=(build/libs/govnOmod-*.jar)
+          if [ ${#jars[@]} -eq 0 ]; then
+            echo "ERROR: Gradle finished without producing build/libs/govnOmod-*.jar"
+            find build -maxdepth 3 -type f -print 2>/dev/null || true
+            exit 1
+          fi
+          printf 'Produced JAR: %s\n' "${jars[@]}"
 
       - name: Upload mod JAR
         uses: actions/upload-artifact@v4
         with:
           name: govnOmod-1.21.11
           path: build/libs/govnOmod-*.jar
+          if-no-files-found: error
