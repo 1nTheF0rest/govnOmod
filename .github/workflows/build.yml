@@ -3,10 +3,12 @@ name: Build govnOmod
 on:
   push:
     branches: [ main ]
+    paths-ignore:
+      - 'builds/**'
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   build:
@@ -36,9 +38,10 @@ jobs:
       - name: Build mod
         run: gradle clean build --refresh-dependencies --no-daemon --stacktrace
 
-      - name: Verify JAR
+      - name: Copy ready JAR to builds
         shell: bash
         run: |
+          set -euo pipefail
           shopt -s nullglob
           jars=(build/libs/govnOmod-*.jar)
           if [ ${#jars[@]} -eq 0 ]; then
@@ -46,11 +49,42 @@ jobs:
             find build -maxdepth 3 -type f -print 2>/dev/null || true
             exit 1
           fi
-          printf 'Produced JAR: %s\n' "${jars[@]}"
+
+          rm -f builds/govnOmod-*.jar
+          main_jar=""
+          for jar in "${jars[@]}"; do
+            case "$jar" in
+              *-sources.jar|*-dev.jar) ;;
+              *) main_jar="$jar"; break ;;
+            esac
+          done
+
+          if [ -z "$main_jar" ]; then
+            echo "ERROR: No production JAR found."
+            printf '%s\n' "${jars[@]}"
+            exit 1
+          fi
+
+          cp "$main_jar" "builds/govnOmod-1.21.11.jar"
+          echo "Copied $main_jar -> builds/govnOmod-1.21.11.jar"
+
+      - name: Commit JAR to builds
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add builds/govnOmod-1.21.11.jar
+          if git diff --cached --quiet; then
+            echo "JAR is unchanged; nothing to commit."
+            exit 0
+          fi
+          git commit -m "Build govnOmod JAR"
+          git push
 
       - name: Upload mod JAR
         uses: actions/upload-artifact@v4
         with:
           name: govnOmod-1.21.11
-          path: build/libs/govnOmod-*.jar
+          path: builds/govnOmod-1.21.11.jar
           if-no-files-found: error
